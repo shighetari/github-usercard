@@ -3,7 +3,18 @@
     (replacing the placeholder with your Github name):
     https://api.github.com/users/<your name>
 */
+// https://api.github.com/users/shighetari
+// axios.get(`https://api.github.com/users/shighetari`)
+// .then(response =>{
+// // debugger
+// })
+// .catch(error => {
 
+// })
+// .finally(()=>{
+  
+//   console.log('done')
+// })
 /*
   STEP 2: Inspect and study the data coming back, this is YOUR
     github info! You will need to understand the structure of this
@@ -16,6 +27,7 @@
   STEP 4: Pass the data received from Github into your function,
     and append the returned markup to the DOM as a child of .cards
 */
+ 
 
 /*
   STEP 5: Now that you have your own card getting added to the DOM, either
@@ -50,6 +62,93 @@ const followersArray = [];
     </div>
 */
 
+function markUp(objattrs){
+console.log(objattrs)
+  // let {imageUrl, usersName, usersUserName, usersLocation, addressToUserProfile, 
+  //   userFollowCount, userFollowingCount, UserBio} = objattrs
+  
+  // consts create element  \\
+
+  const divCard = document.createElement('div')
+  const imgURL = document.createElement('img')
+  const divCardInfo = document.createElement('div')
+  const h3User = document.createElement('h3')
+  const pUsername = document.createElement('p')
+  const pLocations = document.createElement('p')
+  const pProfile = document.createElement('p')
+  const aLink = document.createElement('a')
+  const pFollowers = document.createElement('p')
+  const pFollowing = document.createElement('p')
+  const pBio = document.createElement('p')
+
+// append child \\
+
+  divCard.appendChild(imgURL)
+  divCard.appendChild(divCardInfo)
+  divCardInfo.appendChild(h3User)
+  divCardInfo.appendChild(pUsername)
+  divCardInfo.appendChild(pLocations)
+  divCardInfo.appendChild(pProfile)
+  pProfile.appendChild(aLink)
+  divCardInfo.appendChild(pFollowers)
+  divCardInfo.appendChild(pFollowing)
+  divCardInfo.appendChild(pBio)
+  
+  // class list \\
+
+  divCard.classList.add('card')
+  divCardInfo.classList.add('card-info')
+  h3User.classList.add('name')
+  pUsername.classList.add('username')
+  
+  // adding text content \\
+ 
+  imgURL.src = objattrs.imageUrl
+  h3User.textContent = objattrs.usersName
+  pUsername.textContent = objattrs.usersUserName
+  pLocations.textContent = `Location: ${objattrs.usersLocation}`
+  pProfile.textContent = `Profile:` 
+  aLink.href = objattrs.addressToUserProfile
+  pFollowers.textContent = `Followers: ${objattrs.userFollowCount}`
+  pFollowing.textContent = `Following: ${objattrs.userFollowingCount}`
+  pBio.textContent =`Bio: ${objattrs.UserBio}`
+  console.log(divCard)
+  return divCard
+}
+// console.log(markUp())
+
+
+function fetchmarkUp(username){
+  axios.get(`https://api.github.com/users/${username}`)
+  .then(response =>{
+    console.log(response)
+    const user = markUp({
+       
+        imageUrl: response.data[`avatar_url`],
+        usersName: response.data.name,
+        usersUserName:username,
+        usersLocation:response.data.location, 
+        addressToUserProfile:response.data[`html_url`], 
+        userFollowCount:response.data.followers, 
+        userFollowingCount:response.data.following, 
+        UserBio:response.data.bio  
+      })
+        console.log(user)
+        document.querySelector(".cards").appendChild(user)
+  })
+  .catch(error => {
+      console.log(`you failure`)
+  })
+  .finally(()=>{
+    
+    console.log('done')
+  })
+
+}
+
+fetchmarkUp(`shighetari`)
+
+
 /*
   List of LS Instructors Github username's:
     tetondan
@@ -58,3 +157,7 @@ const followersArray = [];
     luishrd
     bigknell
 */
+const friendsArray = ['martakode', `dustinmyers`, `justsml`, `luishrd`, `bigknell`];
+friendsArray.forEach(element => {
+  fetchmarkUp(element)
+})
